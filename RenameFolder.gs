@@ -1,30 +1,22 @@
 function RenameFolder() {
-  var rootFolderName = "Test"; // root Folder: Test --> Docs
-  var rootFolder = DriveApp.getFoldersByName(rootFolderName).next();
-  var subFolders = rootFolder.getFolders();
+  var spreadsheetId = "16u9Xg1c-81VL6uxPTSKJczKfwccSW5UVo9Z9d7wtJho"; // ID của Sheet DSMH.
+  var sheetName = "Sheet1"; // Tên page sử dụng trong DSMH.
 
-  while (subFolders.hasNext()) {
-    var subFolder = subFolders.next();
-    var subFolderName = subFolder.getName();
-    var subSubFolders = subFolder.getFolders();
+  var sheet = SpreadsheetApp.openById(spreadsheetId).getSheetByName(sheetName);
+  var data = sheet.getDataRange().getValues();
 
-    while (subSubFolders.hasNext()) {
-      var subSubFolder = subSubFolders.next();
-      var subSubFolderName = subSubFolder.getName();
+  for (var i = 0; i < data.length; i++) {
+    var parentFolderName = String(data[i][0]).trim(); 
+    var oldFolderName = String(data[i][1]).trim(); 
+    var newFolderName = String(data[i][2]).trim(); 
 
-      switch (subSubFolderName) {
-        case "K16": // old name
-          subSubFolder.setName("2020"); // new name
-          break;
-        case "K17":
-          subSubFolder.setName("2021");
-          break;
-        case "K18":
-          subSubFolder.setName("2022");
-          break;
-        default:
-          continue;
-      }
+    var parentFolder = DriveApp.getFoldersByName(parentFolderName).next();
+    var subFolders = parentFolder.getFoldersByName(oldFolderName);
+    
+    while (subFolders.hasNext()) {
+      var subFolder = subFolders.next();
+      subFolder.setName(newFolderName);
+      Logger.log("Đã đổi tên thư mục " + oldFolderName + " trong thư mục " + parentFolderName + " thành: " + newFolderName); //Log xem quá trình hoạt động.
     }
   }
 }
