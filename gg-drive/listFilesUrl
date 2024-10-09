@@ -1,0 +1,20 @@
+function listFilesUrl(folderId, sheetId) {
+  var folder = DriveApp.getFolderById("1TjIygC_EermjfPRFDxsyw3qa3sOqMA3L");
+  var sheet = SpreadsheetApp.openById("1XB2okV3a_UC7OJ0dLT62EuDtx4epKqdRBP5P811lOoc").getActiveSheet();
+  sheet.clear();
+  sheet.appendRow(["FileName", "URL"]); 
+  getFolderFiles(folder, sheet);
+}
+
+function getFolderFiles(folder, sheet) {
+  var files = folder.getFiles();
+  while (files.hasNext()) {
+    var file = files.next();
+    sheet.appendRow([file.getName(), file.getUrl()]);
+  }
+  
+  var subfolders = folder.getFolders();
+  while (subfolders.hasNext()) {
+    getFolderFiles(subfolders.next(), sheet);
+  }
+}
