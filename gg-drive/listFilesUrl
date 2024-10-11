@@ -2,19 +2,21 @@ function listFilesUrl(folderId, sheetId) {
   var folder = DriveApp.getFolderById("1TjIygC_EermjfPRFDxsyw3qa3sOqMA3L");
   var sheet = SpreadsheetApp.openById("1XB2okV3a_UC7OJ0dLT62EuDtx4epKqdRBP5P811lOoc").getActiveSheet();
   sheet.clear();
-  sheet.appendRow(["FileName", "URL"]); 
-  getFolderFiles(folder, sheet);
+  sheet.appendRow(["FolderPath", "FileName", "URL"]);
+  getFolderFiles(folder, sheet, folder.getName()); // Bắt đầu từ folder gốc
 }
 
-function getFolderFiles(folder, sheet) {
+function getFolderFiles(folder, sheet, folderPath) {
   var files = folder.getFiles();
   while (files.hasNext()) {
     var file = files.next();
-    sheet.appendRow([file.getName(), file.getUrl()]);
+    sheet.appendRow([folderPath, file.getName(), file.getUrl()]); // Thêm folderPath
   }
-  
+
   var subfolders = folder.getFolders();
   while (subfolders.hasNext()) {
-    getFolderFiles(subfolders.next(), sheet);
+    var subfolder = subfolders.next();
+    var newPath = folderPath + "/" + subfolder.getName(); // Cập nhật đường dẫn
+    getFolderFiles(subfolder, sheet, newPath);
   }
 }
